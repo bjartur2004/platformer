@@ -8,11 +8,16 @@ public class playerMotor : MonoBehaviour
 
     private Rigidbody2D rb;
 
+    // config variables
     [SerializeField] private float moveForce;
     [SerializeField] private float speedRampSpeed;
     [SerializeField] private float maxSpeedRamp;
+    [Space(10)]
+    [SerializeField] private float jumpForce;
 
 
+
+    // process variables
     private float speedRamp = 0;
     private float speedRampForce = 1;
 
@@ -44,17 +49,18 @@ public class playerMotor : MonoBehaviour
                     speedRamp = 1;
                 }
 
+                // smooth ramp up 
                 speedRampForce = 1 + speedRamp * (1 + speedRamp * (1 - speedRamp)) * maxSpeedRamp;
             }
         }
-
+        // seta x hraða 
         rb.velocity = new Vector2 (dir * moveForce * speedRampForce, rb.velocity.y);
     }
 
 
     public void jump()
     {
-
+        rb.AddForce(new Vector2(0,jumpForce), ForceMode2D.Impulse);
     }
 
 
