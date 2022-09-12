@@ -28,12 +28,16 @@ public class PlayerInput : MonoBehaviour
         }
         else
         {
-            pMotor.move(0);
+            //pMotor.move(0);
         }
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            pMotor.jump();
+            pMotor.jump(true);
+        }
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            pMotor.jump(false);
         }
 
     }

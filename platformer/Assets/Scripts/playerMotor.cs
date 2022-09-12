@@ -9,11 +9,16 @@ public class playerMotor : MonoBehaviour
     private Rigidbody2D rb;
 
     // config variables
+    [SerializeField] private float gravityScale;
+    [Space(10)]
     [SerializeField] private float moveForce;
     [SerializeField] private float speedRampSpeed;
     [SerializeField] private float maxSpeedRamp;
     [Space(10)]
     [SerializeField] private float jumpForce;
+    [SerializeField] private float maxHold;
+    [SerializeField] private float jumpingGravity;
+
 
 
 
@@ -21,16 +26,24 @@ public class playerMotor : MonoBehaviour
     private float speedRamp = 0;
     private float speedRampForce = 1;
 
+    private bool isjumping;
+    private float holdTimer;
+
     // Start is called before the first frame update
     void Start()
     {
         rb = gameObject.GetComponent<Rigidbody2D>();
+
+        rb.gravityScale = gravityScale;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if (isjumping)
+        {
+            jumping();
+        }
     }
 
     public void move(float dir)
@@ -58,10 +71,33 @@ public class playerMotor : MonoBehaviour
     }
 
 
-    public void jump()
+    public void jump(bool start)
     {
-        rb.AddForce(new Vector2(0,jumpForce), ForceMode2D.Impulse);
+        if (start)
+        {
+            rb.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
+            rb.gravityScale = jumpingGravity;
+            holdTimer = maxHold;
+            isjumping = true;
+        }
+        else
+        {
+            if (isjumping)
+            {
+                isjumping = false;
+                rb.gravityScale = gravityScale;
+            }
+        }
     }
 
+    private void jumping()
+    {
+        holdTimer -= Time.deltaTime;
+        if(holdTimer < 0)
+        {
+            isjumping = false;
+            rb.gravityScale = gravityScale;
+        }
+    }
 
 }
