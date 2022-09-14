@@ -18,9 +18,9 @@ public class playerMotor : MonoBehaviour
     [SerializeField] private float jumpForce;
     [SerializeField] private float maxHold;
     [SerializeField] private float jumpingGravity;
-
-
-
+    [Space(10)]
+    [SerializeField] private float floatGravity;
+    [SerializeField] private float deployTime;
 
     // process variables
     private float speedRamp = 0;
@@ -28,6 +28,9 @@ public class playerMotor : MonoBehaviour
 
     private bool isjumping;
     private float holdTimer;
+
+    private float floating;
+    private float floatDeplayTimer;
 
     // Start is called before the first frame update
     void Start()
@@ -98,6 +101,19 @@ public class playerMotor : MonoBehaviour
             isjumping = false;
             rb.gravityScale = gravityScale;
         }
+    }
+
+    public void airfloat(bool dofloat)
+    {
+        if (dofloat && rb.velocity.y < 0)
+        {
+            rb.gravityScale = floatGravity;
+        }
+        else
+        {
+            rb.gravityScale = gravityScale;
+        }
+        
     }
 
 }
