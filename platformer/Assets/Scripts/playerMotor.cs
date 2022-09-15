@@ -19,8 +19,11 @@ public class playerMotor : MonoBehaviour
     [SerializeField] private float maxHold;
     [SerializeField] private float jumpingGravity;
     [Space(10)]
-    [SerializeField] private float floatGravity;
-    [SerializeField] private float deployTime;
+    [SerializeField] private float verticalDrag;
+    [SerializeField] private float horazontalDrag;
+    [Space(10)]
+    [SerializeField] private float ungroundTime;
+
 
     // process variables
     private float speedRamp = 0;
@@ -28,9 +31,13 @@ public class playerMotor : MonoBehaviour
 
     private bool isjumping;
     private float holdTimer;
+    private bool grounded;
 
-    private float floating;
-    private float floatDeplayTimer;
+    private float verticalDragReduction;
+    private float horazontalDragReduction;
+
+    private bool isUngrounding;
+    private float ungroundTimer;
 
     // Start is called before the first frame update
     void Start()
@@ -38,6 +45,10 @@ public class playerMotor : MonoBehaviour
         rb = gameObject.GetComponent<Rigidbody2D>();
 
         rb.gravityScale = gravityScale;
+
+        verticalDragReduction = Mathf.Pow(2, -verticalDrag);
+        horazontalDragReduction = Mathf.Pow(2, -horazontalDrag);
+
     }
 
     // Update is called once per frame
@@ -47,6 +58,20 @@ public class playerMotor : MonoBehaviour
         {
             jumping();
         }
+        if (isUngrounding)
+        {
+            ungrounding();
+        }
+    }
+
+    private void FixedUpdate()
+    {
+        drag();
+    }
+
+    private void drag()
+    {
+        rb.velocity = new Vector2(rb.velocity.x * horazontalDragReduction, rb.velocity.y * verticalDragReduction);
     }
 
     public void move(float dir)
@@ -73,10 +98,30 @@ public class playerMotor : MonoBehaviour
         rb.velocity = new Vector2 (dir * moveForce * speedRampForce, rb.velocity.y);
     }
 
+    public void onGround(bool onGround)
+    {
+        if(onGround)
+        {
+            grounded = true;
+        }
+        else
+        {
+            if(isjumping == false)
+            {
+                ungroundTimer = ungroundTime;
+                isUngrounding = true;
+            }
+            else
+            {
+                grounded = false;
+            }
+
+        }
+    }
 
     public void jump(bool start)
     {
-        if (start)
+        if (start && grounded)
         {
             rb.AddForce(new Vector2(0, jumpForce), ForceMode2D.Impulse);
             rb.gravityScale = jumpingGravity;
@@ -104,17 +149,17 @@ public class playerMotor : MonoBehaviour
         }
     }
 
-    public void airfloat(bool dofloat)
+    private void ungrounding()
     {
-        if (dofloat && rb.velocity.y < 0)
+        ungroundTimer -= Time.deltaTime;
+        if(ungroundTimer < 0)
         {
-            rb.gravityScale = floatGravity;
+            isUngrounding = false;
+            grounded = false;
         }
-        else
-        {
-            rb.gravityScale = gravityScale;
-        }
-        
     }
+
+
+
 
 }

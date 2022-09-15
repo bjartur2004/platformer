@@ -40,15 +40,5 @@ public class PlayerInput : MonoBehaviour
             pMotor.jump(false);
         }
 
-        if (Input.GetKeyDown(KeyCode.W))
-        {
-            pMotor.airfloat(true);
-        }
-        if (Input.GetKeyUp(KeyCode.W))
-        {
-            pMotor.airfloat(false);
-        }
-
-
     }
 }
