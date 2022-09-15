@@ -90,6 +90,7 @@ public class playerMotor : MonoBehaviour
         }
     }
 
+
     private void jumping()
     {
         holdTimer -= Time.deltaTime;
