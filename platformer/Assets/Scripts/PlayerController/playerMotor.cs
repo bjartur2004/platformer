@@ -9,6 +9,8 @@ public class playerMotor : MonoBehaviour
     private Rigidbody2D rb;
 
     // config variables
+    [SerializeField] private BoxCollider2D feat;
+    [Space(10)]
     [SerializeField] private float gravityScale;
     [Space(10)]
     [SerializeField] private float moveForce;
@@ -31,13 +33,15 @@ public class playerMotor : MonoBehaviour
 
     private bool isjumping;
     private float holdTimer;
-    private bool grounded;
 
     private float verticalDragReduction;
     private float horazontalDragReduction;
 
-    private bool isUngrounding;
-    private float ungroundTimer;
+    [SerializeField] private bool grounded;
+    [SerializeField] private bool isUngrounding;
+    [SerializeField] private float ungroundTimer;
+
+    private LayerMask NotGround = 2;
 
     // Start is called before the first frame update
     void Start()
@@ -54,14 +58,18 @@ public class playerMotor : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         if (isjumping)
         {
             jumping();
         }
         if (isUngrounding)
         {
-            ungrounding();
+           ungrounding();
         }
+
+        groundCheck();
+
     }
 
     private void FixedUpdate()
@@ -98,15 +106,17 @@ public class playerMotor : MonoBehaviour
         rb.velocity = new Vector2 (dir * moveForce * speedRampForce, rb.velocity.y);
     }
 
-    public void onGround(bool onGround)
+    public void groundCheck()
     {
-        if(onGround)
+        RaycastHit2D hit = Physics2D.BoxCast(feat.bounds.center,feat.bounds.extents,0, Vector2.down, NotGround);
+        if (hit.collider != null)
         {
             grounded = true;
         }
         else
         {
-            if(isjumping == false)
+
+            if (isjumping == false)
             {
                 ungroundTimer = ungroundTime;
                 isUngrounding = true;
@@ -115,7 +125,6 @@ public class playerMotor : MonoBehaviour
             {
                 grounded = false;
             }
-
         }
     }
 
